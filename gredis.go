@@ -106,9 +106,10 @@ func loadConfigFromGlobal(ctx context.Context, group string) (*Config, error) {
 }
 
 func Clear() {
-	localConfigMap.LockFunc(func(m map[string]interface{}) {
-		m = make(map[string]interface{})
-		localInstances.Clear()
-	})
-	glog.Info(context.Background(), "redis config cleared")
+	localConfigMap.Clear()
+	var ctx = context.Background()
+	glog.Info(ctx, "redis config cleared")
+	localInstances.Clear()
+	glog.Info(ctx, "redis instances cleared")
+
 }
