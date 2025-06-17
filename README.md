@@ -1,0 +1,3 @@
+# gredis simple版本
+由于goframe的gredis过度封装导致无法使用底层go-redis的很多原生方法，所以自定义一个返回g0-redis原生client的gredis
+goframe v3版本计划废除gredis，可以期待一下
