@@ -1,3 +1,5 @@
 # gredis simple版本
-由于goframe的gredis过度封装导致无法使用底层go-redis的很多原生方法，所以自定义一个返回g0-redis原生client的gredis
+由于goframe的gredis过度封装导致无法使用底层go-redis的很多原生方法，所以自定义一个返回go-redis原生UniversalClient客户端
+保留了原版从gcfg中读取配置文件的功能，但是增加clear方法用于使用类似nacos作为远程配置中心时配置文件发生变化时，清除配置缓存和旧的客户端实例
+在nacos配置中的OnChange方法中调用，当配置文件发生变化时会回调这个
 goframe v3版本计划废除gredis，可以期待一下
