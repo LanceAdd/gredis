@@ -110,4 +110,5 @@ func Clear() {
 		m = make(map[string]interface{})
 		localInstances.Clear()
 	})
+	glog.Info(context.Background(), "redis config cleared")
 }
