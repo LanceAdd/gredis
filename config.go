@@ -2,16 +2,10 @@ package gredis
 
 import (
 	"crypto/tls"
-	"github.com/gogf/gf/v2/container/gmap"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/util/gconv"
 	"time"
-)
-
-var (
-	// Configuration groups.
-	localConfigMap = gmap.NewStrAnyMap(true)
 )
 
 type Config struct {
@@ -38,17 +32,6 @@ type Config struct {
 	SlaveOnly       bool          `json:"slaveOnly"`       // Route all commands to slave read-only nodes.
 	Cluster         bool          `json:"cluster"`         // Specifies whether cluster mode be used.
 	Protocol        int           `json:"protocol"`        // Specifies the RESP version (Protocol 2 or 3.)
-}
-
-func GetConfig(name ...string) (config *Config, ok bool) {
-	group := DefaultGroupName
-	if len(name) > 0 {
-		group = name[0]
-	}
-	if v := localConfigMap.Get(group); v != nil {
-		return v.(*Config), true
-	}
-	return &Config{}, false
 }
 
 func ConfigFromMap(m map[string]interface{}) (config *Config, err error) {

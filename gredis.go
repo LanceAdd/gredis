@@ -27,9 +27,6 @@ func Redis(name ...string) redis.UniversalClient {
 	}
 	instanceKey := fmt.Sprintf("%s.%s", frameCoreComponentNameRedis, group)
 	result := localInstances.GetOrSetFuncLock(instanceKey, func() interface{} {
-		if c, ok := GetConfig(group); ok {
-			return New(c)
-		}
 		config, err := loadConfigFromGlobal(ctx, group)
 		if err != nil {
 			glog.Errorf(ctx, "failed to load redis config for group: %q: %+v", group, err)
@@ -38,9 +35,6 @@ func Redis(name ...string) redis.UniversalClient {
 			glog.Printf(context.Background(), "missing configuration for redis group: %q", group)
 			return nil
 		}
-		localConfigMap.GetOrSetFuncLock(group, func() interface{} {
-			return config
-		})
 		return New(config)
 	})
 	if result == nil {
@@ -106,10 +100,16 @@ func loadConfigFromGlobal(ctx context.Context, group string) (*Config, error) {
 }
 
 func Clear() {
-	localConfigMap.Clear()
 	var ctx = context.Background()
-	glog.Info(ctx, "redis config cleared")
-	localInstances.Clear()
+	localInstances.LockFunc(func(m map[string]interface{}) {
+		for k, v := range m {
+			if c, ok := v.(redis.UniversalClient); ok {
+				if err := c.Close(); err != nil {
+					glog.Error(ctx, "failed to close redis client: %+v", err)
+				}
+			}
+			delete(m, k)
+		}
+	})
 	glog.Info(ctx, "redis instances cleared")
-
 }
